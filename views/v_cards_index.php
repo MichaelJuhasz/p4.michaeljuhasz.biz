@@ -4,15 +4,34 @@
 			<h1>English - Farsi Flash Cards</h1>
 			<p>Use the new card widget on the right to add news cards (make sure to include both English and Farsi on each card).</p>
 			<p>Click on a card, or press the up or down arrow keys to see the other side.  Cycle through the cards by clicking the arrow buttons, or by using the arrow keys.</p>
+			<!-- <form id='searchbar'> -->
 			<form id='searchbar' class='navbar-form' role='search'>
+				<!-- <div> -->
 				<div class='input-group'>
+
+					<!-- <input type='text' id='search' placeholder='Search'> -->
 					<input type='text' id='search' class='form-control navbar-search' placeholder='Search'>
-					<div class='input-group-btn'>
-						<button class='btn btn-default' type='submit' id='search_button'><i class='glyphicon glyphicon-search'></i></button>
+					
+					<!-- <div class='input-group-btn'> -->
+					<div class='input-group-btn'>					
+						<!-- <button id='search_button'><i class='glyphicon glyphicon-search'></i></button> -->
+						<button class='btn btn-default' id='search_button'><i class='glyphicon glyphicon-search'></i></button>
+
 					</div>
 				</div>	
 			</form>
-			<div id="search_error"></div>
+			<div id="search_error">
+			</div>
+			<div id="units">
+				<!-- <input type="checkbox" id="unit1" value="1"><label for="unit1">Unit 1</label> -->
+				<div id="input_field">
+				</div>
+				<button class="btn btn-primary" id="unit_button">Get cards</button><br>				
+			</div>
+			<div>
+				<h2 id="current_unit"></h2>
+				<button class="btn btn-primary" id="new_unit">New unit</button>
+			</div>
 		</div>
 	</div>
 	<div class="row">

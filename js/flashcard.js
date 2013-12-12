@@ -1,25 +1,53 @@
 var cardCount = 0;
 // Ready the flippling 
 var flipped = false;
-	var cards;
+var cards;
+var currentUnit = 1;
 
 $(document).ready(function(){
-
+	var highUnit = 1; 
 	$.ajax({
 		url: "/cards/get_cards/",
 		success: function(response){
 			cards = JSON.parse(response);
+			console.log(cards);
+
+			// Set up the unit selector by looping through cards
+			// and seeing what the highest unit number is
+			for(i = 0; i < cards.length; i++){
+				if(parseInt(cards[i].unit) > highUnit) highUnit = parseInt(cards[i].unit);
+			}
+
+			// Then...
+			for(i = 1; i <= highUnit; i++)
+			{
+				$("#input_field").append('<input type="checkbox" id="unit'+i+'" value="'+i+'"><label for="unit'+i+'">Unit '+i+'</label>')
+			}
+			
 			getACard(cardCount);
-
-			// // Cool, but not what I want...
-			// var result = $.grep(cards, function(e){
-			// 	return e.english == "Net, lace ";
-			// });
-			// console.log(result);
-
-			var result = myIndexOf("Horn ");
-			console.log(result);
 		}
+	});
+
+	$("#unit_button").click(function(){
+		var units = "";
+		$("input:checked").each(function(){
+			units += $(this).val()+",";
+		});
+		units = units.slice(0,-1);
+
+		$.ajax({
+			url: "/cards/get_cards/"+units,
+			success: function(response){
+				cards = JSON.parse(response);
+				getACard(cardCount);
+			}
+		});
+	});
+
+	$("#new_unit").click(function(){
+		currentUnit = highUnit + 1;
+		highUnit = currentUnit;
+		$("#current_unit").html("Unit "+currentUnit); 
 	});
 
 	$("#submit_button").click(function(){
@@ -33,7 +61,7 @@ $(document).ready(function(){
 			$.ajax({
 				type: 'post',
 				url: '/cards/p_add/',
-				data: $("#add_form").serialize(),
+				data: $("#add_form").serialize()+"&unit="+currentUnit,
 				beforeSend: function(){
 					if (med_query.matches){
 						$("#new_card").html(eng_word)
@@ -51,14 +79,25 @@ $(document).ready(function(){
 				},
 				success: function(response){
 					$("#add_form").trigger("reset");
-					cards.splice(cards.length,0,{english: eng_word, farsi: far_word})
+					cards.splice(cards.length,0,{english: eng_word, farsi: far_word, unit: currentUnit})
 				}
 			});
 		}
 
 		else $("#error_text").css('visibility','visible');
-	});
+	});	
 
+	$("#search_button").click(function(){
+		var search_word = $("#search").val();
+		var index = myIndexOf(search_word);
+		if (index == -1){
+			$("#search_error").html("Couldn't find that word in your stack");
+		} else{
+			$("#search_error").html("");
+			cardCount = index; 
+			getACard(index);
+		}
+	});
 	
     $(".hover").click(function(){
     	if (cards != undefined)flip();
@@ -104,17 +143,6 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#search_button").click(function(){
-		var search_word = $("#search").val();
-		var index = myIndexOf(search_word);
-		if (index == -1){
-			$("#search_error").html("Couldn't find that word in your stack");
-		} else{
-			$("#search_error").html("");
-			cardCount = index; 
-			getACard(index);
-		}
-	});
 });	
 
 function getACard(cardCount){
@@ -124,8 +152,10 @@ function getACard(cardCount){
 
 	var english_word = cards[cardCount].english;
 	var farsi_word = cards[cardCount].farsi;
+	currentUnit = parseInt(cards[cardCount].unit);	
 	$(".front").html(english_word);
-	$(".back").html(farsi_word);	
+	$(".back").html(farsi_word);
+	$("#current_unit").html("Unit "+currentUnit);
 }
 
 function flip(){
@@ -194,8 +224,9 @@ function endOfStack(){
 
 // http://stackoverflow.com/questions/12604062/javascript-array-indexof-doesnt-search-objects 
 function myIndexOf(search_word){
+	var lc_search_word = search_word.toLowerCase();
 	for (var i = 0; i < cards.length; i++){
-		if (cards[i].english == search_word || cards[i].farsi == search_word){
+		if (cards[i].english.toLowerCase().indexOf(lc_search_word) == 0 || cards[i].farsi.indexOf(search_word) == 0){
 			return i;
 		}
 	}
