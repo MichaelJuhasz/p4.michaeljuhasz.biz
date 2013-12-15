@@ -7,8 +7,9 @@
 	<script src="/js/jquery.form.js" type="text/javascript"></script>
 	<link href="//netdna.bootstrapcdn.com/bootstrap/3.0.0/css/bootstrap.min.css" rel="stylesheet">
 	<link rel="stylesheet" type="text/css" href="/css/flashcard.css">
-
-	<!-- Controller Specific JS/CSS -->
+	<link rel="stylesheet" type="text/css" href="/css/general.css">
+	<link href='http://fonts.googleapis.com/css?family=Oswald' rel='stylesheet' type='text/css'>	<!-- Controller Specific JS/CSS -->
+	<link href='http://fonts.googleapis.com/css?family=Ubuntu:700' rel='stylesheet' type='text/css'>
 	<?php if(isset($client_files_head)) echo $client_files_head; ?>
 
 </head>

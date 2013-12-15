@@ -1,3 +1,7 @@
+body {
+	font-size: 1.3em;
+}
+
 p{
 	text-align:          center;
 	width:               600px;
@@ -40,6 +44,10 @@ p{
 	background-repeat:   no-repeat;
 	background-position: 50% 70%;
 	position:            relative;
+}
+
+#card_maker {
+	z-index: -10;
 }
 
 /*http://simonlockyer.info/flip-div-css3-tutorial/ */
@@ -125,6 +133,11 @@ button{
 	z-index:             100;
 }
 
+#next_unit {
+	top:                 260px;
+	left:                154px;
+}
+
 #next{
 	top:                 260px;
 	left:                120px;
@@ -135,7 +148,68 @@ button{
 	left:                80px;
 }
 
+#last_unit {
+	top:                 260px;
+	left:                40px;
+}
+
 #delete{
 	top:                 260px;
-	left:                170px;
+	left:                200px;
 }
+
+h2 {
+	display: inline;
+	margin-right: 10px;
+}
+
+ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+#unit_controls {
+	margin-top: 5%;
+	z-index: -10;
+}
+
+#unit_controls label {
+	margin-right: 5px;
+}
+
+#input_field {
+	margin-top: 20px;
+}
+
+#new_unit {
+	font-family: sans-serif;
+	margin-left: -45px;
+}
+
+#current_unit {
+	font-family: 'Ubuntu', sans-serif;
+	color: #c6c6c6;
+}
+
+.container-full {
+	margin: 0 auto;
+	width: 100%;
+	background-color: gray;
+}
+
+.pseudo-nav {
+	padding: 20px 0 5px;
+	background-color: #494A43;
+	box-shadow:          1px 1px 2px 1px #8C8C89;
+}
+
+.pseudo-nav img {
+	margin-left: -20px;
+	margin-top: -15px;
+}
+
+.pseudo-nav a:link {
+	color: #8C8C89;
+}
+

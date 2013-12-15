@@ -21,7 +21,7 @@ $(document).ready(function(){
 			// Then...
 			for(i = 1; i <= highUnit; i++)
 			{
-				$("#input_field").append('<input type="checkbox" id="unit'+i+'" value="'+i+'"><label for="unit'+i+'">Unit '+i+'</label>')
+				$("#input_field").append('<li><label for="unit'+i+'">Unit '+i+'</label><input type="checkbox" id="unit'+i+'" value="'+i+'"></li>')
 			}
 			
 			getACard(cardCount);
@@ -47,7 +47,7 @@ $(document).ready(function(){
 	$("#new_unit").click(function(){
 		currentUnit = highUnit + 1;
 		highUnit = currentUnit;
-		$("#current_unit").html("Unit "+currentUnit); 
+		$("#current_unit").html("Current unit: "+currentUnit); 
 	});
 
 	$("#submit_button").click(function(){
@@ -143,6 +143,15 @@ $(document).ready(function(){
 		}
 	});
 
+	$("#last_unit").click(function(){
+		currentUnit--;
+		if(currentUnit < 1) currentUnit = highUnit;
+		cardCount = myIndexUnit(currentUnit);
+		console.log(cardCount);
+		getACard(cardCount);
+		// previous();	
+	});
+
 });	
 
 function getACard(cardCount){
@@ -155,7 +164,7 @@ function getACard(cardCount){
 	currentUnit = parseInt(cards[cardCount].unit);	
 	$(".front").html(english_word);
 	$(".back").html(farsi_word);
-	$("#current_unit").html("Unit "+currentUnit);
+	$("#current_unit").html("Current unit: "+currentUnit);
 }
 
 function flip(){
@@ -233,15 +242,12 @@ function myIndexOf(search_word){
 	return -1;
 }
 
-// function search(search_word){
-// 	var index = myIndexOf(search_word);
-// 	if (index == -1){
-// 		$("#search_error").html("Couldn't find that word in your stack");
-// 	} else{
-// 		$("#search_error").html("");
-// 		cardCount = index; 
-// 		getACard(index);
-// 	}
-// }
+function myIndexUnit(unit){
+	for (var i = 0; i < cards.length; i++){
+		if (cards[i].unit == unit) return i;
+	}
+}
+
+
 
 

@@ -15,9 +15,8 @@ class users_controller extends base_controller {
         $this->template->content1->error = $error;
         $this->template->content2->error = $error;
 
-        # This js merely adds a bit of responsiveness to the logo image 
-        // $client_files_body = Array("/js/signin.js");
-        // $this->template->client_files_body = Utils::load_client_files($client_files_body); 
+        $client_files_head = Array("/css/signin.css");
+        $this->template->client_files_head = Utils::load_client_files($client_files_head); 
 
         # Render template
         echo $this->template;
@@ -52,7 +51,7 @@ class users_controller extends base_controller {
         $token = Token::look_for_token($_POST['email'], $_POST['password']);
         setcookie("token", $token, strtotime('+1 year'), '/');
 
-        Router::redirect ('/users/profile');
+        Router::redirect ('/cards/p_add/first_time');
     }   
 
     public function p_login(){
