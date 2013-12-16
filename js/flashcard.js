@@ -3,6 +3,8 @@ var cardCount = 0;
 var flipped = false;
 var cards;
 var currentUnit = 1;
+var units = [];
+var unit_select = false;
 
 $(document).ready(function(){
 	var highUnit = 1; 
@@ -10,6 +12,13 @@ $(document).ready(function(){
 		url: "/cards/get_cards/",
 		success: function(response){
 			cards = JSON.parse(response);
+			
+
+			// Sort the array by unit
+			cards = cards.sort(function(obj1, obj2){
+				return obj1.unit - obj2.unit;
+			});
+
 			console.log(cards);
 
 			// Set up the unit selector by looping through cards
@@ -22,6 +31,7 @@ $(document).ready(function(){
 			for(i = 1; i <= highUnit; i++)
 			{
 				$("#input_field").append('<li><label for="unit'+i+'">Unit '+i+'</label><input type="checkbox" id="unit'+i+'" value="'+i+'"></li>')
+				// units[i] = i;
 			}
 			
 			getACard(cardCount);
@@ -29,19 +39,44 @@ $(document).ready(function(){
 	});
 
 	$("#unit_button").click(function(){
-		var units = "";
-		$("input:checked").each(function(){
-			units += $(this).val()+",";
-		});
-		units = units.slice(0,-1);
+		units = $("input:checked").map(function(){
+			return $(this).val();
+		}).get();
 
-		$.ajax({
-			url: "/cards/get_cards/"+units,
-			success: function(response){
-				cards = JSON.parse(response);
-				getACard(cardCount);
+		console.log(units);
+
+		if(units.length > 0) unit_select = true;
+		else unit_select = false;
+
+		getACard(cardCount);
+		// $("input:checked").each(function(){
+		// 	units += $(this).val()+",";
+		// });
+		// units = units.slice(0,-1);
+
+		// $.ajax({
+		// 	url: "/cards/get_cards/"+units,
+		// 	success: function(response){
+		// 		cards = JSON.parse(response);
+		// 		getACard(cardCount);
+		// 	}
+		// });
+	});
+
+	$("#search_button").click(function(){
+		var search_word = $("#search").val();
+		if (search_word != "") {
+			var index = myIndexOf(search_word);
+			if (index == -1){
+				$("#search_error").html("Couldn't find that word in your stack");
+			} else{
+				$("#search_error").html("");
+				cardCount = index; 
+				getACard(index);
 			}
-		});
+		}
+		$("#search").val("");	
+		return false;
 	});
 
 	$("#new_unit").click(function(){
@@ -87,17 +122,7 @@ $(document).ready(function(){
 		else $("#error_text").css('visibility','visible');
 	});	
 
-	$("#search_button").click(function(){
-		var search_word = $("#search").val();
-		var index = myIndexOf(search_word);
-		if (index == -1){
-			$("#search_error").html("Couldn't find that word in your stack");
-		} else{
-			$("#search_error").html("");
-			cardCount = index; 
-			getACard(index);
-		}
-	});
+
 	
     $(".hover").click(function(){
     	if (cards != undefined)flip();
@@ -109,6 +134,24 @@ $(document).ready(function(){
 
 	$("#last").click(function(){
 		if (cards != undefined)previous();
+	});
+
+	$("#last_unit").click(function(){
+		currentUnit--;
+		if(currentUnit < 1) currentUnit = highUnit;
+		cardCount = myIndexUnit(currentUnit);
+		console.log(cardCount);
+		getACard(cardCount);
+		// previous();	
+	});
+
+	$("#next_unit").click(function(){
+		currentUnit++;
+		if(currentUnit > highUnit) currentUnit = 1;
+		cardCount = myIndexUnit(currentUnit);
+		console.log(cardCount);
+		getACard(cardCount);
+
 	});
 
 	$("#delete").click(function(){
@@ -143,28 +186,26 @@ $(document).ready(function(){
 		}
 	});
 
-	$("#last_unit").click(function(){
-		currentUnit--;
-		if(currentUnit < 1) currentUnit = highUnit;
-		cardCount = myIndexUnit(currentUnit);
-		console.log(cardCount);
-		getACard(cardCount);
-		// previous();	
-	});
-
 });	
 
 function getACard(cardCount){
 // Grab key/value pair out of localStorage using the 
 // index passed in the function call.  Set html of 
 // "flippy_card" with one value and return the other.
-
+	if (unit_select){
+		while(units.indexOf(cards[cardCount].unit) == -1){
+			console.log("skipped card: "+cardCount);
+			if (cardCount >= cards.length-1) cardCount = 0;
+			else cardCount++;
+		}
+	}
 	var english_word = cards[cardCount].english;
 	var farsi_word = cards[cardCount].farsi;
 	currentUnit = parseInt(cards[cardCount].unit);	
 	$(".front").html(english_word);
 	$(".back").html(farsi_word);
 	$("#current_unit").html("Current unit: "+currentUnit);
+	console.log("selected card: "+cardCount);
 }
 
 function flip(){
@@ -181,8 +222,6 @@ function next(){
 // Hitting the next button activates some fancy animation
 // and increments cardCount and then calls getACard with
 // the incremented value, to return the next card in the set
-	// if (cardCount >= cards.length-1) cardCount = 0;
-	// else cardCount++;
 	endOfStack();
 	if(!flipped){
 		$("#next_card").html($(".front").text())
