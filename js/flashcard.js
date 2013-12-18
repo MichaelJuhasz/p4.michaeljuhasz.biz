@@ -2,12 +2,13 @@ var cardCount = 0;
 // Ready the flippling 
 var flipped = false;
 var cards;
+var highUnit = 1; 
 var currentUnit = 1;
 var units = [];
 var unit_select = false;
 
 $(document).ready(function(){
-	var highUnit = 1; 
+
 	$.ajax({
 		url: "/cards/get_cards/",
 		success: function(response){
@@ -34,7 +35,7 @@ $(document).ready(function(){
 				// units[i] = i;
 			}
 			
-			getACard(cardCount);
+			getACard();
 		}
 	});
 
@@ -48,19 +49,8 @@ $(document).ready(function(){
 		if(units.length > 0) unit_select = true;
 		else unit_select = false;
 
-		getACard(cardCount);
-		// $("input:checked").each(function(){
-		// 	units += $(this).val()+",";
-		// });
-		// units = units.slice(0,-1);
-
-		// $.ajax({
-		// 	url: "/cards/get_cards/"+units,
-		// 	success: function(response){
-		// 		cards = JSON.parse(response);
-		// 		getACard(cardCount);
-		// 	}
-		// });
+		unitCheck(true);
+		getACard();
 	});
 
 	$("#search_button").click(function(){
@@ -72,7 +62,7 @@ $(document).ready(function(){
 			} else{
 				$("#search_error").html("");
 				cardCount = index; 
-				getACard(index);
+				getACard();
 			}
 		}
 		$("#search").val("");	
@@ -82,7 +72,8 @@ $(document).ready(function(){
 	$("#new_unit").click(function(){
 		currentUnit = highUnit + 1;
 		highUnit = currentUnit;
-		$("#current_unit").html("Current unit: "+currentUnit); 
+		$("#current_unit").html("Current unit: "+currentUnit);
+		$("#input_field").append('<li><label for="unit'+currentUnit+'">Unit '+currentUnit+'</label><input type="checkbox" id="unit'+currentUnit+'" value="'+currentUnit+'"></li>'); 
 	});
 
 	$("#submit_button").click(function(){
@@ -140,8 +131,8 @@ $(document).ready(function(){
 		currentUnit--;
 		if(currentUnit < 1) currentUnit = highUnit;
 		cardCount = myIndexUnit(currentUnit);
-		console.log(cardCount);
-		getACard(cardCount);
+		unitCheck(false);
+		getACard();
 		// previous();	
 	});
 
@@ -149,8 +140,9 @@ $(document).ready(function(){
 		currentUnit++;
 		if(currentUnit > highUnit) currentUnit = 1;
 		cardCount = myIndexUnit(currentUnit);
-		console.log(cardCount);
-		getACard(cardCount);
+
+		unitCheck(true);
+		getACard();
 
 	});
 
@@ -163,7 +155,7 @@ $(document).ready(function(){
 				});
 			cards.splice(cardCount,1);
 			endOfStack();
-			getACard(cardCount);
+			getACard();
 
 		}
 	});
@@ -188,17 +180,11 @@ $(document).ready(function(){
 
 });	
 
-function getACard(cardCount){
+function getACard(){
 // Grab key/value pair out of localStorage using the 
 // index passed in the function call.  Set html of 
 // "flippy_card" with one value and return the other.
-	if (unit_select){
-		while(units.indexOf(cards[cardCount].unit) == -1){
-			console.log("skipped card: "+cardCount);
-			if (cardCount >= cards.length-1) cardCount = 0;
-			else cardCount++;
-		}
-	}
+
 	var english_word = cards[cardCount].english;
 	var farsi_word = cards[cardCount].farsi;
 	currentUnit = parseInt(cards[cardCount].unit);	
@@ -223,6 +209,8 @@ function next(){
 // and increments cardCount and then calls getACard with
 // the incremented value, to return the next card in the set
 	endOfStack();
+	unitCheck(true);
+	
 	if(!flipped){
 		$("#next_card").html($(".front").text())
 				   .css("z-index", "100");
@@ -231,7 +219,7 @@ function next(){
 				   .css("z-index", "100");
 	}
 	
-	getACard(cardCount);
+	getACard();
 	$("#next_card").animate({left: '300px'}, function(){
 		$("#next_card").css("z-index","-1")
 					   .animate({left: '15'});
@@ -248,6 +236,8 @@ function previous(){
 // make sense.
 	if(cardCount <= 0) cardCount = cards.length - 1;
 	else cardCount--;
+
+	unitCheck(false);
 	if(!flipped){
 		$("#next_card").html(cards[cardCount].english);	
 	} else {
@@ -259,7 +249,7 @@ function previous(){
 			$("#next_card").css("z-index", "100") 
 				   		   .animate({left: '15px'},
 				function(){
-					getACard(cardCount);
+					getACard();
 					$("#next_card").css("z-index", "-1");
 				   });
 		});
@@ -288,5 +278,17 @@ function myIndexUnit(unit){
 }
 
 
-
+function unitCheck(forward){
+	while(units.indexOf(cards[cardCount].unit) == -1){
+		console.log("skipped card: "+cardCount);
+		if(forward == true){
+			if (cardCount >= cards.length-1) cardCount = 0;
+			else cardCount++;
+		}
+		else {
+			if(cardCount <= 0) cardCount = cards.length - 1;
+			else cardCount--;
+		}
+	}
+}
 

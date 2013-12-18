@@ -111,7 +111,7 @@ class users_controller extends base_controller {
         // print_r($cards);
         // echo '</pre>';
 
-        $client_files_head = Array('/keyboard/keyboard.css');
+        $client_files_head = Array('/keyboard/keyboard.css','/css/flashcard.css');
         $this->template->client_files_head = Utils::load_client_files($client_files_head); 
         
         $client_files_body = Array('/js/flashcard.js','/keyboard/keyboard.js');

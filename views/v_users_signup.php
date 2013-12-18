@@ -1,7 +1,7 @@
 <div class='container'>
 	<div class='row'>
 		<div id='logo' class='col-md-6'>
-			<img src='/images/logo.png' alt='Farsi Flash Cards'>
+			<img src='/images/Logo.png' alt='Farsi Flash Cards'>
 		</div>
 
 	<div class='col-md-3 col-md-offset-1'>
