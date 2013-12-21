@@ -8,19 +8,17 @@ var units = [];
 var unit_select = false;
 
 $(document).ready(function(){
-
+	// Start off by grabbing the cards from the database 
 	$.ajax({
 		url: "/cards/get_cards/",
 		success: function(response){
+			// Make an array of the results sent from PHP
 			cards = JSON.parse(response);
 			
-
 			// Sort the array by unit
 			cards = cards.sort(function(obj1, obj2){
 				return obj1.unit - obj2.unit;
 			});
-
-			console.log(cards);
 
 			// Set up the unit selector by looping through cards
 			// and seeing what the highest unit number is
@@ -28,32 +26,32 @@ $(document).ready(function(){
 				if(parseInt(cards[i].unit) > highUnit) highUnit = parseInt(cards[i].unit);
 			}
 
-			// Then...
+			// Then, for all the units between 1 and highUnit, and a 
+			// corresponding checkbox with that value.
 			for(i = 1; i <= highUnit; i++)
 			{
 				$("#input_field").append('<li><label for="unit'+i+'">Unit '+i+'</label><input type="checkbox" id="unit'+i+'" value="'+i+'"></li>')
 				// units[i] = i;
 			}
 			
+			// Finally, get the first card.
 			getACard();
 		}
 	});
 
 	$("#unit_button").click(function(){
+		// Build an array of the checked values
 		units = $("input:checked").map(function(){
 			return $(this).val();
 		}).get();
 
-		console.log(units);
-
-		if(units.length > 0) unit_select = true;
-		else unit_select = false;
-
+		// Check to see if current card is valid, else get a new one
 		unitCheck(true);
 		getACard();
 	});
 
 	$("#search_button").click(function(){
+		// Pretty cut and dry. 
 		var search_word = $("#search").val();
 		if (search_word != "") {
 			var index = myIndexOf(search_word);
@@ -70,6 +68,8 @@ $(document).ready(function(){
 	});
 
 	$("#new_unit").click(function(){
+		// Increment the higest unit and display it (by setting currentUnit to highUnit)
+		// then update unit selection list.
 		currentUnit = highUnit + 1;
 		highUnit = currentUnit;
 		$("#current_unit").html("Current unit: "+currentUnit);
@@ -77,7 +77,7 @@ $(document).ready(function(){
 	});
 
 	$("#submit_button").click(function(){
-
+		// Animation only works if the screen is beyond a certain width
 		var med_query = window.matchMedia("(min-width: 992px)");
 		var eng_word = $("#english_word").val();
 		var far_word = $("#farsi_word").val();
@@ -105,6 +105,8 @@ $(document).ready(function(){
 				},
 				success: function(response){
 					$("#add_form").trigger("reset");
+					// Include the new card in the array so that a database query
+					// needn't be done.
 					cards.splice(cards.length,0,{english: eng_word, farsi: far_word, unit: currentUnit})
 				}
 			});
@@ -132,8 +134,7 @@ $(document).ready(function(){
 		if(currentUnit < 1) currentUnit = highUnit;
 		cardCount = myIndexUnit(currentUnit);
 		unitCheck(false);
-		getACard();
-		// previous();	
+		getACard();	
 	});
 
 	$("#next_unit").click(function(){
@@ -160,6 +161,7 @@ $(document).ready(function(){
 		}
 	});
 
+	// Keyboard can be used instead of mouse!
 	$(window).keydown(function(e){
 		var key = e.keyCode;
 		if (cards != undefined){
@@ -181,9 +183,9 @@ $(document).ready(function(){
 });	
 
 function getACard(){
-// Grab key/value pair out of localStorage using the 
-// index passed in the function call.  Set html of 
-// "flippy_card" with one value and return the other.
+// Grab the english, farsi and unit properties of the 
+// element in the array.  Set up the front and back of 
+// the card and set Current unit to whatever's on the card
 
 	var english_word = cards[cardCount].english;
 	var farsi_word = cards[cardCount].farsi;
@@ -191,7 +193,6 @@ function getACard(){
 	$(".front").html(english_word);
 	$(".back").html(farsi_word);
 	$("#current_unit").html("Current unit: "+currentUnit);
-	console.log("selected card: "+cardCount);
 }
 
 function flip(){
@@ -206,9 +207,12 @@ function flip(){
 
 function next(){
 // Hitting the next button activates some fancy animation
-// and increments cardCount and then calls getACard with
-// the incremented value, to return the next card in the set
-	endOfStack();
+// and increments cardCount, checks to see if the card is
+// of one of the selected units, otherwise goes to the next 
+// card and then calls getACard with the incremented value, 
+// to return the next card in the set.
+	if (cardCount >= cards.length-1) cardCount = 0;
+	else cardCount++;
 	unitCheck(true);
 	
 	if(!flipped){
@@ -229,11 +233,7 @@ function next(){
 function previous(){
 // Basically as above.  Animation is reversed (sort of)
 // cardCount is decremented and a card is gotten.
-// The principle difference is that I have to cheat and 
-// get the text for the "next_card" from localStorage,
-// since if I call the function before the card has been 
-// put back on top of the stack, the animation doesn't 
-// make sense.
+
 	if(cardCount <= 0) cardCount = cards.length - 1;
 	else cardCount--;
 
@@ -255,13 +255,14 @@ function previous(){
 		});
 }
 
-function endOfStack(){
-	if (cardCount >= cards.length-1) cardCount = 0;
-	else cardCount++;
-}
+// function endOfStack(){
+// 	if (cardCount >= cards.length-1) cardCount = 0;
+// 	else cardCount++;
+// }
 
-// http://stackoverflow.com/questions/12604062/javascript-array-indexof-doesnt-search-objects 
 function myIndexOf(search_word){
+	// indexOf is great, but doesn't work with objects, which 
+	// are what I have in the array 
 	var lc_search_word = search_word.toLowerCase();
 	for (var i = 0; i < cards.length; i++){
 		if (cards[i].english.toLowerCase().indexOf(lc_search_word) == 0 || cards[i].farsi.indexOf(search_word) == 0){
@@ -272,6 +273,7 @@ function myIndexOf(search_word){
 }
 
 function myIndexUnit(unit){
+	// Same deal as above.
 	for (var i = 0; i < cards.length; i++){
 		if (cards[i].unit == unit) return i;
 	}
@@ -279,6 +281,11 @@ function myIndexUnit(unit){
 
 
 function unitCheck(forward){
+	// We check to see if the unit property of the object 
+	// at the present position of the array (cardCount) has 
+	// a unit value which matches one of the values in the 
+	// units array.  If not, grab either the previous or the 
+	// next card, depending on what's passed as an argument.
 	while(units.indexOf(cards[cardCount].unit) == -1){
 		console.log("skipped card: "+cardCount);
 		if(forward == true){

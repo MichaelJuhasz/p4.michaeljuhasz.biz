@@ -7,11 +7,11 @@
 		</form>
 
 		<?php if($error == "errorLogin"): ?>
-			<div class = 'col-md-3 col-md-offset-7'>
+			<div class = 'col-md-10 col-md-offset-2'>
 				<p class='error'>Login Failed.  The email or password you enetered was incorrect.</p>
 			</div>
 		<?php elseif($error == "errorProtected"): ?>
-			<div class = 'col-md-3 col-md-offset-7'>
+			<div class = 'col-md-10 col-md-offset-2'>
 				<p class='error'>You must be logged in to see this content</p>
 			</div>	
 		<?php endif; ?>

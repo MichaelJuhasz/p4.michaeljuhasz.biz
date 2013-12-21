@@ -107,10 +107,6 @@ class users_controller extends base_controller {
         $this->template->content1 = View::instance('v_cards_index');
         $cards = Card::get_cards_by_user($this->user->user_id);
 
-        // echo '<pre>';
-        // print_r($cards);
-        // echo '</pre>';
-
         $client_files_head = Array('/keyboard/keyboard.css','/css/flashcard.css');
         $this->template->client_files_head = Utils::load_client_files($client_files_head); 
         
@@ -122,40 +118,4 @@ class users_controller extends base_controller {
 
     }
 
-    // public function p_edit_profile(){
-        
-    //     $q = array($_POST['name'] => $_POST['value'], 'modified' => Time::now());
-
-    //     DB::instance(DB_NAME)->update('users',$q,'WHERE user_id = '.$_POST['pk']);
-    //     Router::redirect('/users/profile');
-    // }
-
-    // public function p_search(){
-    //     # Sanitize $_POST data
-    //     $_POST = DB::instance(DB_NAME)->sanitize($_POST);
-
-    //     # Set up query to grab user info 
-    //     $q = "SELECT first_name, last_name, user_id, bio, location
-    //         FROM users
-    //         WHERE first_name LIKE '%".$_POST['search']."%'
-    //         OR last_name LIKE '%".$_POST['search']."%'
-    //         OR bio LIKE '%".$_POST['search']."%'
-    //         OR location LIKE '%".$_POST['search']."%'";   
-
-    //     # Query and put the results in the $results array
-    //     $results = DB::instance(DB_NAME)->select_rows($q);
-
-    //     # Display results
-    //     $this->template->content1 = View::instance('v_users_search');
-
-    //     # Load results into template 
-    //     $this->template->content1->results = $results;
-
-    //     $this->template->title = "Soapbox - Search";
-
-    //     $client_files_head = Array("/css/search.css");
-    //     $this->template->client_files_head = Utils::load_client_files($client_files_head); 
-
-    //     echo $this->template;
-    // }
 } # end of the class

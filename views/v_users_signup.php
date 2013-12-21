@@ -6,9 +6,7 @@
 
 	<div class='col-md-3 col-md-offset-1'>
 		<div id='signup-menu'>
-<!-- 			<a class='col-md-2 col-md-offset-1 btn btn-info accordion-toggle' data-toggle='collapse' data-parent='#signup-menu' href='#signup'>
-				Sign up
-			</a> -->
+
 			<form method='POST' action='/users/p_signup'>
 				<div id='signup' >
 					<input type='text' name='first_name' placeholder='First Name' required>
@@ -23,11 +21,9 @@
 				</div>
 			</form>	 
 		</div>
-	<!-- </div> -->
-	<!-- <div class='row'> -->
-		<?php if($error == "errorEmail"): ?>
-			<div class = 'col-md-3 col-md-offset-7'>
-				<p class='error'>The email you entered is already in our system.</p>
-			</div>
-		<?php endif; ?>	
-	<!-- </div>	 -->
+
+	<?php if($error == 'errorEmail'): ?>
+		<div class = 'col-md-8 col-md-offset-2'>
+			<p class='error'>The email you entered is already in our system.</p>
+		</div>
+	<?php endif; ?>	
