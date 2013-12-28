@@ -47,6 +47,8 @@
 				<ul id="input_field"></ul>
 				<button class="btn btn-default" id="unit_button">Get cards</button><br>				
 			</div>
+			<div id="unit_error">
+			</div>
 		</div>
 	</div>
 </div>

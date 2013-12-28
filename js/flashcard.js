@@ -70,10 +70,12 @@ $(document).ready(function(){
 	$("#new_unit").click(function(){
 		// Increment the higest unit and display it (by setting currentUnit to highUnit)
 		// then update unit selection list.
+
 		currentUnit = highUnit + 1;
 		highUnit = currentUnit;
 		$("#current_unit").html("Current unit: "+currentUnit);
 		$("#input_field").append('<li><label for="unit'+currentUnit+'">Unit '+currentUnit+'</label><input type="checkbox" id="unit'+currentUnit+'" value="'+currentUnit+'"></li>'); 
+
 	});
 
 	$("#submit_button").click(function(){
@@ -213,6 +215,7 @@ function next(){
 // to return the next card in the set.
 	if (cardCount >= cards.length-1) cardCount = 0;
 	else cardCount++;
+
 	unitCheck(true);
 	
 	if(!flipped){
@@ -286,15 +289,23 @@ function unitCheck(forward){
 	// a unit value which matches one of the values in the 
 	// units array.  If not, grab either the previous or the 
 	// next card, depending on what's passed as an argument.
-	while(units.indexOf(cards[cardCount].unit) == -1){
-		console.log("skipped card: "+cardCount);
-		if(forward == true){
-			if (cardCount >= cards.length-1) cardCount = 0;
-			else cardCount++;
+	$("#unit_error").html("");
+	if(units.length > 0){
+		var count = 0;
+		while(units.indexOf(cards[cardCount].unit) == -1 && count <= cards.length){
+			// console.log("skipped card: "+cardCount);
+			if(forward == true){
+				if (cardCount >= cards.length-1) cardCount = 0;
+				else cardCount++;
+			}
+			else {
+				if(cardCount <= 0) cardCount = cards.length - 1;
+				else cardCount--;
+			}
+			count++;
 		}
-		else {
-			if(cardCount <= 0) cardCount = cards.length - 1;
-			else cardCount--;
+		if (count > cards.length){
+			$("#unit_error").html("There are no cards in this range!");
 		}
 	}
 }

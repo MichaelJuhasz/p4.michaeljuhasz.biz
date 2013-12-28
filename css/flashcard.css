@@ -202,3 +202,7 @@ ul {
 	position: absolute;
 	top:      -30px;
 }
+
+#unit_error{
+	padding-top: 25px;
+}
